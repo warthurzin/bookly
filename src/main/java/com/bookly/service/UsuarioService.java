@@ -1,12 +1,15 @@
 package com.bookly.service;
 
+import com.bookly.dto.UsuarioPostRequestBody;
+import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,38 +21,53 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> buscarUsuarioPorId(long id) {
-        return usuarioRepository.findById(id);
+    public Usuario buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário Com ID: " + id + " Não Encontrado."));
     }
 
-    public Usuario criarNovoUsuario(Usuario novoUsuario) {
-        if (usuarioRepository.findByEmail(novoUsuario.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("O e-mail " + novoUsuario.getEmail() + " já está em uso.");
+    public Usuario criarNovoUsuario(UsuarioPostRequestBody postRequest) {
+        if (usuarioRepository.findByEmail(postRequest.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("O e-mail " + postRequest.getEmail() + " já está em uso");
         }
+
+        Usuario novoUsuario = Usuario.builder()
+                .nome(postRequest.getNome())
+                .email(postRequest.getEmail())
+                .senha(postRequest.getSenha())
+                .cidade(postRequest.getCidade())
+                .estado(postRequest.getEstado())
+                .tipoUsuario(postRequest.getTipoUsuario())
+                .status(postRequest.getStatus())
+                .fotoPerfil(postRequest.getFotoPerfil())
+                .biografia(postRequest.getBiografia())
+                .build();
 
         return usuarioRepository.save(novoUsuario);
     }
 
-    public Usuario atualizarUsuario(Long id, Usuario dadosUsuario) {
-        Usuario usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário com ID: " + id + " não encontrado"));
+    public Usuario atualizarUsuario(Long id, UsuarioPutRequestBody putRequest) {
+        Usuario usuarioExistente = buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
 
-        usuarioExistente.setNome(dadosUsuario.getNome());
-        usuarioExistente.setEmail(dadosUsuario.getEmail());
-        usuarioExistente.setCidade(dadosUsuario.getCidade());
-        usuarioExistente.setEstado(dadosUsuario.getEstado());
-        usuarioExistente.setTipoUsuario(dadosUsuario.getTipoUsuario());
-        usuarioExistente.setFotoPerfil(dadosUsuario.getFotoPerfil());
-        usuarioExistente.setBiografia(dadosUsuario.getBiografia());
-        usuarioExistente.setStatus(dadosUsuario.getStatus());
+        Usuario usuarioAtualizado = Usuario.builder()
+                .id(usuarioExistente.getId())
+                .nome(putRequest.getNome())
+                .email(putRequest.getEmail())
+                .cidade(putRequest.getCidade())
+                .estado(putRequest.getEstado())
+                .tipoUsuario(putRequest.getTipoUsuario())
+                .status(putRequest.getStatus())
+                .fotoPerfil(putRequest.getFotoPerfil())
+                .biografia(putRequest.getBiografia())
+                .senha(usuarioExistente.getSenha())
+                .dataCadastro(usuarioExistente.getDataCadastro())
+                .build();
 
-        return usuarioRepository.save(usuarioExistente);
+        return usuarioRepository.save(usuarioAtualizado);
     }
 
     public void deletarUsuario(Long id) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new EntityNotFoundException("Usuário não encontrado para exclusão com ID: " + id);
-        }
-        usuarioRepository.deleteById(id);
+        Usuario usuario = buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
+        usuarioRepository.delete(usuario);
     }
 }
