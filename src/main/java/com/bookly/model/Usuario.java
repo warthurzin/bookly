@@ -1,5 +1,6 @@
 package com.bookly.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,10 +43,12 @@ public class Usuario {
 
     @CreationTimestamp
     @Column(name = "data_cadastro", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataCadastro;
 
     @UpdateTimestamp
     @Column(name = "data_atualizacao")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataAtualizacao;
 
     public String getSenha() {
