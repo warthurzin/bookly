@@ -22,9 +22,6 @@ public class Usuario {
 
     private String nome;
     private String email;
-
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     private String senha;
 
     private String cidade;
