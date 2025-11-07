@@ -51,7 +51,4 @@ public class Usuario {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataAtualizacao;
 
-    public String getSenha() {
-        return senha;
-    }
 }
