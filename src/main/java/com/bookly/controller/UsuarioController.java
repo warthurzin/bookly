@@ -1,8 +1,8 @@
 package com.bookly.controller;
 
+import com.bookly.dto.UsuarioGetResponse;
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
-import com.bookly.model.Usuario;
 import com.bookly.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,23 +19,23 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> listar() {
-        List<Usuario> usuarios = usuarioService.buscarTodosUsuarios();
+    public ResponseEntity<List<UsuarioGetResponse>> listar() {
+        List<UsuarioGetResponse> usuarios = usuarioService.buscarTodosUsuarios();
         return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id));
+    public ResponseEntity<UsuarioGetResponse> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(id));
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> salvar(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
+    public ResponseEntity<UsuarioGetResponse> salvar(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
         return new ResponseEntity<>(usuarioService.criarNovoUsuario(usuarioPostRequestBody), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> editar(@PathVariable Long id, @RequestBody UsuarioPutRequestBody usuarioPutRequestBody) {
+    public ResponseEntity<Void> editar(@PathVariable Long id, @RequestBody UsuarioPutRequestBody usuarioPutRequestBody) {
         usuarioService.atualizarUsuario(id, usuarioPutRequestBody);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
