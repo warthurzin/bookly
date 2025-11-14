@@ -2,6 +2,7 @@ package com.bookly.service;
 
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
+import com.bookly.mapper.UsuarioMapper;
 import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
 
     public List<Usuario> buscarTodosUsuarios() {
         return usuarioRepository.findAll();
@@ -30,39 +32,16 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(postRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("O e-mail " + postRequest.getEmail() + " já está em uso");
         }
-
-        Usuario novoUsuario = Usuario.builder()
-                .nome(postRequest.getNome())
-                .email(postRequest.getEmail())
-                .senha(postRequest.getSenha())
-                .cidade(postRequest.getCidade())
-                .estado(postRequest.getEstado())
-                .tipoUsuario(postRequest.getTipoUsuario())
-                .status(postRequest.getStatus())
-                .fotoPerfil(postRequest.getFotoPerfil())
-                .biografia(postRequest.getBiografia())
-                .build();
-
-        return usuarioRepository.save(novoUsuario);
+        return usuarioRepository.save(usuarioMapper.toUsuario(postRequest));
     }
 
     public Usuario atualizarUsuario(Long id, UsuarioPutRequestBody putRequest) {
         Usuario usuarioExistente = buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
 
-        Usuario usuarioAtualizado = Usuario.builder()
-                .id(usuarioExistente.getId())
-                .nome(putRequest.getNome())
-                .email(putRequest.getEmail())
-                .cidade(putRequest.getCidade())
-                .estado(putRequest.getEstado())
-                .tipoUsuario(putRequest.getTipoUsuario())
-                .status(putRequest.getStatus())
-                .fotoPerfil(putRequest.getFotoPerfil())
-                .biografia(putRequest.getBiografia())
-                .senha(usuarioExistente.getSenha())
-                .dataCadastro(usuarioExistente.getDataCadastro())
-                .build();
-
+        Usuario usuarioAtualizado = usuarioMapper.toUsuario(putRequest);
+        usuarioAtualizado.setId(usuarioExistente.getId());
+        usuarioAtualizado.setSenha(usuarioExistente.getSenha());
+        usuarioAtualizado.setDataCadastro(usuarioExistente.getDataCadastro());
         return usuarioRepository.save(usuarioAtualizado);
     }
 
