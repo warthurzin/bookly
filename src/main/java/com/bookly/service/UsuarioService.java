@@ -1,5 +1,6 @@
 package com.bookly.service;
 
+import com.bookly.dto.UsuarioGetResponse;
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.mapper.UsuarioMapper;
@@ -19,8 +20,8 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
-    public List<Usuario> buscarTodosUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioGetResponse> buscarTodosUsuarios() {
+        return usuarioMapper.toResponseList(usuarioRepository.findAll());
     }
 
     public Usuario buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(long id) {
@@ -28,21 +29,30 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário Com ID: " + id + " Não Encontrado."));
     }
 
-    public Usuario criarNovoUsuario(UsuarioPostRequestBody postRequest) {
+    public UsuarioGetResponse buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(long id) {
+        Usuario usuario = buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
+        return usuarioMapper.toResponse(usuario);
+    }
+
+    public UsuarioGetResponse criarNovoUsuario(UsuarioPostRequestBody postRequest) {
         if (usuarioRepository.findByEmail(postRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("O e-mail " + postRequest.getEmail() + " já está em uso");
         }
-        return usuarioRepository.save(usuarioMapper.toUsuario(postRequest));
+        Usuario novoUsuario = usuarioMapper.toUsuario(postRequest);
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+        return usuarioMapper.toResponse(usuarioSalvo);
     }
 
-    public Usuario atualizarUsuario(Long id, UsuarioPutRequestBody putRequest) {
+    public void atualizarUsuario(Long id, UsuarioPutRequestBody putRequest) {
         Usuario usuarioExistente = buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
 
         Usuario usuarioAtualizado = usuarioMapper.toUsuario(putRequest);
+
         usuarioAtualizado.setId(usuarioExistente.getId());
         usuarioAtualizado.setSenha(usuarioExistente.getSenha());
         usuarioAtualizado.setDataCadastro(usuarioExistente.getDataCadastro());
-        return usuarioRepository.save(usuarioAtualizado);
+
+        usuarioRepository.save(usuarioAtualizado);
     }
 
     public void deletarUsuario(Long id) {
