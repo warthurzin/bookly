@@ -3,6 +3,7 @@ package com.bookly.service;
 import com.bookly.dto.UsuarioGetResponse;
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
+import com.bookly.exception.BadRequestException;
 import com.bookly.mapper.UsuarioMapper;
 import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
@@ -31,7 +32,7 @@ public class UsuarioService {
 
     public Usuario buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário Com ID: " + id + " Não Encontrado."));
+                .orElseThrow(() -> new BadRequestException("Usuário Com ID: " + id + " Não Encontrado."));
     }
 
     public UsuarioGetResponse buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(long id) {
