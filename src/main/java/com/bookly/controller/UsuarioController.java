@@ -29,6 +29,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(id));
     }
 
+    @GetMapping("/busca")
+    public ResponseEntity<List<UsuarioGetResponse>> buscarPorNome(@RequestParam String nome) {
+        List<UsuarioGetResponse> usuarios = usuarioService.buscarUsuarioPorNome(nome);
+        return ResponseEntity.ok(usuarios);
+    }
+
     @PostMapping
     public ResponseEntity<UsuarioGetResponse> salvar(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
         return new ResponseEntity<>(usuarioService.criarNovoUsuario(usuarioPostRequestBody), HttpStatus.CREATED);
