@@ -24,6 +24,11 @@ public class UsuarioService {
         return usuarioMapper.toResponseList(usuarioRepository.findAll());
     }
 
+    public List<UsuarioGetResponse> buscarUsuarioPorNome(String nome) {
+        List<Usuario> usuariosEncontrados = usuarioRepository.findByNome(nome);
+        return usuarioMapper.toResponseList(usuariosEncontrados);
+    }
+
     public Usuario buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário Com ID: " + id + " Não Encontrado."));
