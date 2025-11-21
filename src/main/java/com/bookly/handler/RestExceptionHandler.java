@@ -29,7 +29,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BadRequestExceptionDetails> handleMethodArgumentNotValid(
+    public ResponseEntity<BadRequestExceptionDetails> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException manvException) {
 
         String fieldsMessage = manvException.getBindingResult().getFieldErrors().stream()
@@ -41,7 +41,7 @@ public class RestExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .status(HttpStatus.BAD_REQUEST.value())
                         .title("Campos Inválidos - Verifique a requisição")
-                        .details("Os campos a seguir estão incorretos: " + fieldsMessage) // Mensagem mais amigável
+                        .details("Os campos a seguir estão incorretos: " + fieldsMessage)
                         .developerMessage(manvException.getClass().getName())
                         .build(), HttpStatus.BAD_REQUEST);
     }
