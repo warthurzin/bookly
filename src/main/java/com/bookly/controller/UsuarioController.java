@@ -4,6 +4,7 @@ import com.bookly.dto.UsuarioGetResponse;
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioGetResponse> salvar(@RequestBody UsuarioPostRequestBody usuarioPostRequestBody) {
+    public ResponseEntity<UsuarioGetResponse> salvar(@RequestBody @Valid UsuarioPostRequestBody usuarioPostRequestBody) {
         return new ResponseEntity<>(usuarioService.criarNovoUsuario(usuarioPostRequestBody), HttpStatus.CREATED);
     }
 
