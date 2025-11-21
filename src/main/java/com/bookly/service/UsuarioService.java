@@ -5,6 +5,8 @@ import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.exception.BadRequestException;
 import com.bookly.mapper.UsuarioMapper;
+import com.bookly.model.StatusUsuario;
+import com.bookly.model.TipoUsuario;
 import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -46,7 +48,12 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(postRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("O e-mail " + postRequest.getEmail() + " já está em uso");
         }
+
         Usuario novoUsuario = usuarioMapper.toUsuario(postRequest);
+
+        novoUsuario.setTipoUsuario(TipoUsuario.USUARIO);
+        novoUsuario.setStatus(StatusUsuario.ATIVO);
+
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
         return usuarioMapper.toResponse(usuarioSalvo);
     }
@@ -59,6 +66,8 @@ public class UsuarioService {
         usuarioAtualizado.setId(usuarioExistente.getId());
         usuarioAtualizado.setSenha(usuarioExistente.getSenha());
         usuarioAtualizado.setDataCadastro(usuarioExistente.getDataCadastro());
+        usuarioAtualizado.setTipoUsuario(usuarioExistente.getTipoUsuario());
+        usuarioAtualizado.setStatus(usuarioExistente.getStatus());
 
         usuarioRepository.save(usuarioAtualizado);
     }
