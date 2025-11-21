@@ -7,6 +7,7 @@ import com.bookly.exception.BadRequestException;
 import com.bookly.mapper.UsuarioMapper;
 import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class UsuarioService {
         return usuarioMapper.toResponse(usuario);
     }
 
+    @Transactional
     public UsuarioGetResponse criarNovoUsuario(UsuarioPostRequestBody postRequest) {
         if (usuarioRepository.findByEmail(postRequest.getEmail()).isPresent()) {
             throw new IllegalArgumentException("O e-mail " + postRequest.getEmail() + " já está em uso");
