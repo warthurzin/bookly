@@ -6,7 +6,6 @@ import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.model.Usuario;
 import org.mapstruct.Mapper;
 
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
@@ -15,5 +14,4 @@ public interface UsuarioMapper {
     Usuario toUsuario(UsuarioPutRequestBody usuarioPutRequestBody);
 
     UsuarioGetResponse toResponse(Usuario usuario);
-    List<UsuarioGetResponse> toResponseList(List<Usuario> usuarios);
 }
