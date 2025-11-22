@@ -11,6 +11,8 @@ import com.bookly.model.Usuario;
 import com.bookly.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,13 +26,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
-    public List<UsuarioGetResponse> buscarTodosUsuarios() {
-        return usuarioMapper.toResponseList(usuarioRepository.findAll());
+    public Page<UsuarioGetResponse> buscarTodosUsuarios(Pageable pageable) {
+        return usuarioRepository.findAll(pageable)
+                .map(usuarioMapper::toResponse);
     }
 
-    public List<UsuarioGetResponse> buscarUsuarioPorNome(String nome) {
-        List<Usuario> usuariosEncontrados = usuarioRepository.findByNome(nome);
-        return usuarioMapper.toResponseList(usuariosEncontrados);
+    public Page<UsuarioGetResponse> buscarUsuarioPorNome(String nome, Pageable pageable) {
+        return usuarioRepository.findByNome(nome, pageable)
+                .map(usuarioMapper::toResponse);
     }
 
     public Usuario buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(long id) {
