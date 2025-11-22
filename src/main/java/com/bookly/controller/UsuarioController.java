@@ -4,8 +4,11 @@ import com.bookly.dto.UsuarioGetResponse;
 import com.bookly.dto.UsuarioPostRequestBody;
 import com.bookly.dto.UsuarioPutRequestBody;
 import com.bookly.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +23,8 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioGetResponse>> listar() {
-        List<UsuarioGetResponse> usuarios = usuarioService.buscarTodosUsuarios();
+    public ResponseEntity<Page<UsuarioGetResponse>> listar(@Parameter(hidden = true) Pageable pageable) {
+        Page<UsuarioGetResponse> usuarios = usuarioService.buscarTodosUsuarios(pageable);
         return ResponseEntity.ok(usuarios);
     }
 
@@ -31,8 +34,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/busca")
-    public ResponseEntity<List<UsuarioGetResponse>> buscarPorNome(@RequestParam String nome) {
-        List<UsuarioGetResponse> usuarios = usuarioService.buscarUsuarioPorNome(nome);
+    public ResponseEntity<Page<UsuarioGetResponse>> buscarPorNome(@RequestParam String nome, @Parameter(hidden = true) Pageable pageable) {
+        Page<UsuarioGetResponse> usuarios = usuarioService.buscarUsuarioPorNome(nome, pageable);
         return ResponseEntity.ok(usuarios);
     }
 
