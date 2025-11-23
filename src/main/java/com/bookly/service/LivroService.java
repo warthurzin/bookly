@@ -1,0 +1,70 @@
+package com.bookly.service;
+
+import com.bookly.dto.LivroGetResponse;
+import com.bookly.dto.LivroPostRequestBody;
+import com.bookly.dto.LivroPutRequestBody;
+import com.bookly.exception.BadRequestException;
+import com.bookly.mapper.LivroMapper;
+import com.bookly.model.Livro;
+import com.bookly.model.StatusLivro;
+import com.bookly.repository.LivroRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class LivroService {
+
+    private final LivroRepository livroRepository;
+    private final LivroMapper livroMapper;
+
+    public Page<LivroGetResponse> buscarTodosLivros(Pageable pageable) {
+        return livroRepository.findAll(pageable)
+                .map(livroMapper::toResponse);
+    }
+
+    public Page<LivroGetResponse> buscarLivroPorTitulo(String titulo, Pageable pageable) {
+        return livroRepository.findByTituloContainingIgnoreCase(titulo, pageable)
+                .map(livroMapper::toResponse);
+    }
+
+    public Livro buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(Long id) {
+        return livroRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Livro com ID:" + id + " Não Encontrado."));
+    }
+
+    public LivroGetResponse buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(Long id) {
+        return livroMapper.toResponse(buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(id));
+    }
+
+    @Transactional
+    public LivroGetResponse criarNovoLivro(LivroPostRequestBody livroPostRequestBody) {
+        Livro livro = livroMapper.toLivro(livroPostRequestBody);
+
+        livro.setStatusLivro(StatusLivro.DISPONIVEL);
+
+        Livro livroSalvo = livroRepository.save(livro);
+        return livroMapper.toResponse(livroSalvo);
+    }
+
+    @Transactional
+    public void atualizarLivro(Long id, LivroPutRequestBody livroPutRequestBody) {
+        Livro livroSalvo = buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
+
+        Livro livroAtualizado = livroMapper.toLivro(livroPutRequestBody);
+
+        livroAtualizado.setId(livroSalvo.getId());
+        livroAtualizado.setUsuarioId(livroSalvo.getUsuarioId());
+        livroAtualizado.setDataCadastro(livroSalvo.getDataCadastro());
+
+        livroRepository.save(livroAtualizado);
+    }
+
+    public void deletarLivro(Long id) {
+        Livro livroParaDeletar = buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(id);
+        livroRepository.delete(livroParaDeletar);
+    }
+}
