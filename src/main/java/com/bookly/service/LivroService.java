@@ -20,9 +20,16 @@ public class LivroService {
 
     private final LivroRepository livroRepository;
     private final LivroMapper livroMapper;
+    private final UsuarioService usuarioService;
 
     public Page<LivroGetResponse> buscarTodosLivros(Pageable pageable) {
         return livroRepository.findAll(pageable)
+                .map(livroMapper::toResponse);
+    }
+
+    public Page<LivroGetResponse> listarTodosOsLivrosDoUsuario(Long usuarioId, Pageable pageable) {
+        usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(usuarioId);
+        return livroRepository.findByUsuarioId(usuarioId, pageable)
                 .map(livroMapper::toResponse);
     }
 
@@ -44,6 +51,7 @@ public class LivroService {
     public LivroGetResponse criarNovoLivro(LivroPostRequestBody livroPostRequestBody) {
         Livro livro = livroMapper.toLivro(livroPostRequestBody);
 
+        livro.setUsuario(usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(livroPostRequestBody.getUsuarioId()));
         livro.setStatusLivro(StatusLivro.DISPONIVEL);
 
         Livro livroSalvo = livroRepository.save(livro);
@@ -57,7 +65,7 @@ public class LivroService {
         Livro livroAtualizado = livroMapper.toLivro(livroPutRequestBody);
 
         livroAtualizado.setId(livroSalvo.getId());
-        livroAtualizado.setUsuarioId(livroSalvo.getUsuarioId());
+        livroAtualizado.setUsuario(livroSalvo.getUsuario());
         livroAtualizado.setDataCadastro(livroSalvo.getDataCadastro());
 
         livroRepository.save(livroAtualizado);
