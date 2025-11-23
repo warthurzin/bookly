@@ -1,12 +1,14 @@
 package com.bookly.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -48,4 +50,9 @@ public class Usuario {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataAtualizacao;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuario",
+                fetch = FetchType.LAZY,
+                cascade = CascadeType.ALL)
+    private List<Livro> livros;
 }
