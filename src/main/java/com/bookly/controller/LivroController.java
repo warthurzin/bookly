@@ -14,24 +14,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/livros")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class LivroController {
 
     private final LivroService livroService;
 
-    @GetMapping
+    @GetMapping("/livros")
     public ResponseEntity<Page<LivroGetResponse>> listar(@Parameter(hidden = true) Pageable pageable) {
         Page<LivroGetResponse> livros = livroService.buscarTodosLivros(pageable);
         return ResponseEntity.ok(livros);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/usuarios/{usuarioId}/livros")
+    public ResponseEntity<Page<LivroGetResponse>> listarLivrosDoUsuario(
+            @PathVariable Long usuarioId,
+            @Parameter(hidden = true) Pageable pageable) {
+
+        Page<LivroGetResponse> livros = livroService.listarTodosOsLivrosDoUsuario(usuarioId, pageable);
+        return ResponseEntity.ok(livros);
+    }
+
+    @GetMapping("/livros/{id}")
     public ResponseEntity<LivroGetResponse> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(livroService.buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(id));
     }
 
-    @GetMapping("/busca")
+    @GetMapping("/livros/busca")
     public ResponseEntity<Page<LivroGetResponse>> buscarPorTitulo(@RequestParam String titulo, @Parameter(hidden = true)
     Pageable pageable) {
 
@@ -39,19 +48,19 @@ public class LivroController {
         return ResponseEntity.ok(livros);
     }
 
-    @PostMapping
+    @PostMapping("/livros")
     public ResponseEntity<LivroGetResponse> salvar(@RequestBody @Valid LivroPostRequestBody livroPostRequestBody) {
         LivroGetResponse livroCriado = livroService.criarNovoLivro(livroPostRequestBody);
         return new  ResponseEntity<>(livroCriado, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/livros/{id}")
     public ResponseEntity<Void> editar(@PathVariable Long id, @RequestBody @Valid LivroPutRequestBody livroPutRequestBody) {
         livroService.atualizarLivro(id, livroPutRequestBody);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/livros/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         livroService.deletarLivro(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
