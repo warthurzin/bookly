@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -49,6 +50,15 @@ public class Livro {
     private String fotoCapa;
     private Integer numeroPaginas;
     private String idioma;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "livro_categoria",
+        joinColumns = @JoinColumn (name = "livro_id"),
+        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private Set<Categoria> categorias; 
+
 
     @CreationTimestamp
     @Column(name = "data_cadastro", updatable = false)

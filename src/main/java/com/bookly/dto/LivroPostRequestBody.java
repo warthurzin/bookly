@@ -5,10 +5,16 @@ import com.bookly.model.TipoDisponibilidade;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class LivroPostRequestBody {
 
@@ -43,4 +49,6 @@ public class LivroPostRequestBody {
     private String fotoCapa;
     private Integer numeroPaginas;
     private String idioma;
+
+    private Set<Long> categoriaIds;
 }

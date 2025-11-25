@@ -4,13 +4,20 @@ import com.bookly.model.CondicaoLivro;
 import com.bookly.model.StatusLivro;
 import com.bookly.model.TipoDisponibilidade;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.Set;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class LivroGetResponse {
     private Long id;
     private Long usuarioId;
@@ -32,4 +39,6 @@ public class LivroGetResponse {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataAtualizacao;
+
+    private Set<CategoriaGetResponse> categorias;
 }

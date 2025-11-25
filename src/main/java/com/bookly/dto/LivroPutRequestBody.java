@@ -5,9 +5,16 @@ import com.bookly.model.StatusLivro;
 import com.bookly.model.TipoDisponibilidade;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class LivroPutRequestBody {
 
     private Long usuarioId;
@@ -25,4 +32,6 @@ public class LivroPutRequestBody {
     private String fotoCapa;
     private Integer numeroPaginas;
     private String idioma;
+
+    private Set<Long> categoriasId;
 }
