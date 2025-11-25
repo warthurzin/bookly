@@ -23,6 +23,10 @@ public class LivroService {
     private final UsuarioService usuarioService;
     private final CategoriaService categoriaService;
 
+    public Livro salvarLivro(Livro livro) {
+        return livroRepository.save(livro);
+    }
+
     public Page<LivroGetResponse> buscarTodosLivros(Pageable pageable) {
         return livroRepository.findAll(pageable)
                 .map(livroMapper::toResponse);
