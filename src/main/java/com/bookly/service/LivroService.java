@@ -21,6 +21,7 @@ public class LivroService {
     private final LivroRepository livroRepository;
     private final LivroMapper livroMapper;
     private final UsuarioService usuarioService;
+    private final CategoriaService categoriaService;
 
     public Page<LivroGetResponse> buscarTodosLivros(Pageable pageable) {
         return livroRepository.findAll(pageable)
@@ -52,6 +53,7 @@ public class LivroService {
         Livro livro = livroMapper.toLivro(livroPostRequestBody);
 
         livro.setUsuario(usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(livroPostRequestBody.getUsuarioId()));
+        livro.setCategorias(categoriaService.buscarCategoriasPorIds(livroPostRequestBody.getCategoriaIds()));
         livro.setStatusLivro(StatusLivro.DISPONIVEL);
 
         Livro livroSalvo = livroRepository.save(livro);
@@ -66,6 +68,7 @@ public class LivroService {
 
         livroAtualizado.setId(livroSalvo.getId());
         livroAtualizado.setUsuario(livroSalvo.getUsuario());
+        livroAtualizado.setCategorias(categoriaService.buscarCategoriasPorIds(livroPutRequestBody.getCategoriasId()));
         livroAtualizado.setDataCadastro(livroSalvo.getDataCadastro());
 
         livroRepository.save(livroAtualizado);
