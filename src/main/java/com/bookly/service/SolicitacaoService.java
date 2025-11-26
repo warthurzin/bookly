@@ -27,6 +27,7 @@ public class SolicitacaoService {
     private final SolicitacaoMapper solicitacaoMapper;
     private final LivroService livroService;
     private final UsuarioService usuarioService;
+    private final HistoricoTransacaoService historicoTransacaoService;
 
     public Solicitacao buscarSolicitacaoPorIdOuLancarExcecao(Long id) {
         return solicitacaoRepository.findById(id)
@@ -111,6 +112,8 @@ public class SolicitacaoService {
             livroService.salvarLivro(livro);
             solicitacao.setStatusSolicitacao(novoStatus);
             solicitacao.setObservacoes(requestBody.getObservacoes());
+
+            historicoTransacaoService.criarHistoricoAposConclusao(solicitacao);
 
         } else {
             throw new BadRequestException("Ação de status inválida para esta operação.");
