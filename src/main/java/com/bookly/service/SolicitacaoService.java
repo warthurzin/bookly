@@ -5,11 +5,7 @@ import com.bookly.dto.SolicitacaoGetResponse;
 import com.bookly.dto.SolicitacaoPostRequestBody;
 import com.bookly.exception.BadRequestException;
 import com.bookly.mapper.SolicitacaoMapper;
-import com.bookly.model.Livro;
-import com.bookly.model.Solicitacao;
-import com.bookly.model.StatusLivro;
-import com.bookly.model.StatusSolicitacao;
-import com.bookly.model.Usuario;
+import com.bookly.model.*;
 import com.bookly.repository.SolicitacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +24,7 @@ public class SolicitacaoService {
     private final LivroService livroService;
     private final UsuarioService usuarioService;
     private final HistoricoTransacaoService historicoTransacaoService;
+    private final NotificacaoService  notificacaoService;
 
     public Solicitacao buscarSolicitacaoPorIdOuLancarExcecao(Long id) {
         return solicitacaoRepository.findById(id)
@@ -74,6 +71,8 @@ public class SolicitacaoService {
         livro.setStatusLivro(StatusLivro.RESERVADO);
         livroService.salvarLivro(livro);
 
+        notificacaoService.criarNotificacaoSolicitacao(solicitacaoSalva);
+
         return solicitacaoMapper.toResponse(solicitacaoSalva);
     }
 
@@ -96,12 +95,14 @@ public class SolicitacaoService {
             }
             solicitacao.setStatusSolicitacao(novoStatus);
             solicitacao.setObservacoes(requestBody.getObservacoes());
+            notificacaoService.criarNotificacaoAceiteRecusa(solicitacao, TipoNotificacao.ACEITE);
 
         } else if (novoStatus == StatusSolicitacao.RECUSADA || novoStatus == StatusSolicitacao.CANCELADA) {
             livro.setStatusLivro(StatusLivro.DISPONIVEL);
             livroService.salvarLivro(livro);
             solicitacao.setStatusSolicitacao(novoStatus);
             solicitacao.setObservacoes(requestBody.getObservacoes());
+            notificacaoService.criarNotificacaoAceiteRecusa(solicitacao, TipoNotificacao.RECUSA);
 
         } else if (novoStatus == StatusSolicitacao.CONCLUIDA) {
 
