@@ -1,6 +1,7 @@
 package com.bookly.service;
 
 import com.bookly.dto.HistoricoTransacaoGetResponse;
+import com.bookly.exception.BadRequestException;
 import com.bookly.mapper.HistoricoTransacaoMapper;
 import com.bookly.model.HistoricoTransacao;
 import com.bookly.model.Solicitacao;
@@ -9,7 +10,6 @@ import com.bookly.repository.HistoricoTransacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import javax.ws.rs.BadRequestException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
