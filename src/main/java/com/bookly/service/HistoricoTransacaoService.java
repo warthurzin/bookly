@@ -8,6 +8,9 @@ import com.bookly.model.TipoTransacao;
 import com.bookly.repository.HistoricoTransacaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import javax.ws.rs.BadRequestException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,11 @@ public class HistoricoTransacaoService {
                 .build();
 
         return historicoRepository.save(historico);
+    }
+    
+    public HistoricoTransacao buscarHistoricoPorIdOuLancarExcecao(Long historicoId) {
+        return historicoRepository.findById(historicoId)
+                .orElseThrow(() -> new BadRequestException("Histórico de Transação não encontrado."));
     }
 
     public Page<HistoricoTransacaoGetResponse> listarHistoricoComoDoador(Long usuarioId, Pageable pageable) {
