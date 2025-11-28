@@ -22,7 +22,7 @@ public class LivroController {
 
     @GetMapping("/livros")
     public ResponseEntity<Page<LivroGetResponse>> listar(@Parameter(hidden = true) Pageable pageable) {
-        Page<LivroGetResponse> livros = livroService.buscarTodosLivros(pageable);
+        Page<LivroGetResponse> livros = livroService.buscarTodosLivrosDisponiveis(pageable);
         return ResponseEntity.ok(livros);
     }
 
@@ -30,7 +30,7 @@ public class LivroController {
     public ResponseEntity<Page<LivroGetResponse>> listarLivrosPorCategoria
             (@PathVariable Long categoriaId,
              @Parameter(hidden = true) Pageable pageable) {
-        Page<LivroGetResponse> livros = livroService.listarLivrosPorCategoria(categoriaId, pageable);
+        Page<LivroGetResponse> livros = livroService.listarLivrosDisponiveisPorCategoria(categoriaId, pageable);
         return ResponseEntity.ok(livros);
     }
 
@@ -45,14 +45,14 @@ public class LivroController {
 
     @GetMapping("/livros/{id}")
     public ResponseEntity<LivroGetResponse> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(livroService.buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(id));
+        return ResponseEntity.ok(livroService.buscarLivroDisponivelPorIdParaResposta(id));
     }
 
     @GetMapping("/livros/busca")
     public ResponseEntity<Page<LivroGetResponse>> buscarPorTitulo(@RequestParam String titulo, @Parameter(hidden = true)
     Pageable pageable) {
 
-        Page<LivroGetResponse> livros = livroService.buscarLivroPorTitulo(titulo, pageable);
+        Page<LivroGetResponse> livros = livroService.buscarLivrosDisponiveisPorTitulo(titulo, pageable);
         return ResponseEntity.ok(livros);
     }
 

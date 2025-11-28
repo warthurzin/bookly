@@ -4,6 +4,7 @@ import com.bookly.dto.LivroGetResponse;
 import com.bookly.dto.LivroPostRequestBody;
 import com.bookly.dto.LivroPutRequestBody;
 import com.bookly.exception.BadRequestException;
+import com.bookly.exception.ResourceNotFoundException;
 import com.bookly.mapper.LivroMapper;
 import com.bookly.model.Livro;
 import com.bookly.model.StatusLivro;
@@ -27,13 +28,24 @@ public class LivroService {
         return livroRepository.save(livro);
     }
 
-    public Page<LivroGetResponse> buscarTodosLivros(Pageable pageable) {
-        return livroRepository.findAll(pageable)
-                .map(livroMapper::toResponse);
+    public Page<LivroGetResponse> buscarTodosLivrosDisponiveis(Pageable pageable) {
+        Page<Livro> livros = livroRepository.findByStatusLivro(StatusLivro.DISPONIVEL, pageable);
+        return livros.map(livroMapper::toResponse);
     }
 
-    public Page<LivroGetResponse> listarLivrosPorCategoria(Long categoriaId, Pageable pageable) {
-        Page<Livro> livros = livroRepository.findByCategoriaId(categoriaId, pageable);
+    public LivroGetResponse buscarLivroDisponivelPorIdParaResposta(Long id) {
+        Livro livro = livroRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Livro com ID:" + id + " Não Encontrado."));
+
+        if (livro.getStatusLivro() != StatusLivro.DISPONIVEL) {
+            throw new ResourceNotFoundException("Livro não está disponível para doação: " + id);
+        }
+
+        return livroMapper.toResponse(livro);
+    }
+
+    public Page<LivroGetResponse> listarLivrosDisponiveisPorCategoria(Long categoriaId, Pageable pageable) {
+        Page<Livro> livros = livroRepository.findByCategoriaIdAndDisponivel(categoriaId, pageable);
         return livros.map(livroMapper::toResponse);
     }
 
@@ -43,18 +55,14 @@ public class LivroService {
                 .map(livroMapper::toResponse);
     }
 
-    public Page<LivroGetResponse> buscarLivroPorTitulo(String titulo, Pageable pageable) {
-        return livroRepository.findByTituloContainingIgnoreCase(titulo, pageable)
+    public Page<LivroGetResponse> buscarLivrosDisponiveisPorTitulo(String titulo, Pageable pageable) {
+        return livroRepository.findByTituloContainingIgnoreCaseAndStatusLivro(titulo, StatusLivro.DISPONIVEL, pageable)
                 .map(livroMapper::toResponse);
     }
 
     public Livro buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(Long id) {
         return livroRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Livro com ID:" + id + " Não Encontrado."));
-    }
-
-    public LivroGetResponse buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalidaParaResposta(Long id) {
-        return livroMapper.toResponse(buscarLivroPorIdOuLancarExcecaoDeSolicitacaoInvalida(id));
     }
 
     @Transactional
