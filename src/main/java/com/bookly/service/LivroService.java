@@ -32,6 +32,11 @@ public class LivroService {
                 .map(livroMapper::toResponse);
     }
 
+    public Page<LivroGetResponse> listarLivrosPorCategoria(Long categoriaId, Pageable pageable) {
+        Page<Livro> livros = livroRepository.findByCategoriaId(categoriaId, pageable);
+        return livros.map(livroMapper::toResponse);
+    }
+
     public Page<LivroGetResponse> listarTodosOsLivrosDoUsuario(Long usuarioId, Pageable pageable) {
         usuarioService.buscarUsuarioPorIdOuLancarExcecaoDeSolicitacaoInvalida(usuarioId);
         return livroRepository.findByUsuarioId(usuarioId, pageable)

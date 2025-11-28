@@ -26,6 +26,14 @@ public class LivroController {
         return ResponseEntity.ok(livros);
     }
 
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<Page<LivroGetResponse>> listarLivrosPorCategoria
+            (@PathVariable Long categoriaId,
+             @Parameter(hidden = true) Pageable pageable) {
+        Page<LivroGetResponse> livros = livroService.listarLivrosPorCategoria(categoriaId, pageable);
+        return ResponseEntity.ok(livros);
+    }
+
     @GetMapping("/usuarios/{usuarioId}/livros")
     public ResponseEntity<Page<LivroGetResponse>> listarLivrosDoUsuario(
             @PathVariable Long usuarioId,
