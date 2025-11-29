@@ -1,7 +1,6 @@
 package com.bookly.dto;
 
 import com.bookly.model.CondicaoLivro;
-import com.bookly.model.StatusLivro;
 import com.bookly.model.TipoDisponibilidade;
 import lombok.Builder;
 import lombok.Data;
@@ -26,8 +25,6 @@ public class LivroPutRequestBody {
     private String descricao;
     private CondicaoLivro  condicaoLivro;
     private TipoDisponibilidade tipoDisponibilidade;
-
-    private StatusLivro statusLivro;
 
     private String fotoCapa;
     private Integer numeroPaginas;
