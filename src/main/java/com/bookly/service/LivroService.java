@@ -85,7 +85,7 @@ public class LivroService {
 
         livroAtualizado.setId(livroSalvo.getId());
         livroAtualizado.setUsuario(livroSalvo.getUsuario());
-        livroAtualizado.setCategorias(categoriaService.buscarCategoriasPorIds(livroPutRequestBody.getCategoriasId()));
+        livroAtualizado.setCategorias(categoriaService.buscarCategoriasPorIds(livroPutRequestBody.getCategoriaIds()));
         livroAtualizado.setDataCadastro(livroSalvo.getDataCadastro());
         livroAtualizado.setStatusLivro(livroSalvo.getStatusLivro());
 

@@ -30,5 +30,5 @@ public class LivroPutRequestBody {
     private Integer numeroPaginas;
     private String idioma;
 
-    private Set<Long> categoriasId;
+    private Set<Long> categoriaIds;
 }
